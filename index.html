@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<title>反应力小游戏</title>
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        background: #f5f5f5;
+    }
+    #box {
+        width: 120px;
+        height: 120px;
+        background: red;
+        position: absolute;
+        display: none;
+        cursor: pointer;
+        border-radius: 12px;
+    }
+    #info {
+        margin-top: 20px;
+        font-size: 18px;
+    }
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<h2>🧠 反应力测试小游戏</h2>
+<button onclick="startGame()">开始游戏</button>
+<div id="info">点击“开始游戏”后等待红色方块出现</div>
+<div id="box"></div>
+
+<script>
+let startTime;
+let scores = [];
+let round = 0;
+const maxRound = 5;
+
+const box = document.getElementById("box");
+const info = document.getElementById("info");
+
+function randomPosition() {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 200);
+    box.style.left = x + "px";
+    box.style.top = y + "px";
+}
+
+function showBox() {
+    randomPosition();
+    box.style.display = "block";
+    startTime = Date.now();
+}
+
+function startGame() {
+    scores = [];
+    round = 0;
+    info.innerText = "准备开始...";
+    setTimeout(nextRound, 1000);
+}
+
+function nextRound() {
+    if (round >= maxRound) {
+        const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+        info.innerHTML = "🎉 完成！平均反应时间：" + avg.toFixed(0) + " ms";
+        box.style.display = "none";
+        return;
+    }
+
+    info.innerText = "第 " + (round+1) + " 轮：看到红色方块就点击！";
+
+    setTimeout(showBox, Math.random()*2000 + 500);
+}
+
+box.onclick = function() {
+    const reaction = Date.now() - startTime;
+    scores.push(reaction);
+    box.style.display = "none";
+    round++;
+    info.innerText = "反应时间：" + reaction + " ms";
+    setTimeout(nextRound, 1000);
+};
+</script>
+
+</body>
+</html>
